@@ -1,4 +1,6 @@
-**/output**/**
-**__pycache__/**
-**.pyc
-**.pth
+.history
+.DS_Store
+.vscode
+.idea
+.env
+.env.local
