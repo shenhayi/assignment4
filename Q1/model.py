@@ -366,9 +366,9 @@ class Gaussians:
         ### YOUR CODE HERE ###
         # HINT: Refer to README for a relevant equation
         # power = None  # (N, H*W)
-        dists = points_2D - means_2D # (N, H*W, 2)
-        dists_cov = torch.unsqueeze(dists, 3) * torch.unsqueeze(cov_2D_inverse, 1)
-        power = -1/2 * torch.sum(torch.sum(dists_cov, axis = 2) * dists, axis = 2)  # (N, H*W)
+        distance = points_2D - means_2D
+        power = distance@cov_2D_inverse# None  # (N, H*W)
+        power = -0.5*torch.sum(power*distance, 2)
 
         return power
 
@@ -623,11 +623,11 @@ class Scene:
 
         ### YOUR CODE HERE ###
         # HINT: Refer to README for a relevant equation
-        image = torch.sum((alphas * transmittance) * colours, dim=0)  # (H, W, 3)
+        image = torch.sum(colours * alphas * transmittance, dim=0)  # (H, W, 3)
 
         ### YOUR CODE HERE ###
         # HINT: Can you implement an equation inspired by the equation for colour?
-        depth = torch.sum((alphas * transmittance) * z_vals, dim=0)  # (H, W, 1)
+        depth = torch.sum(z_vals * alphas * transmittance, dim=0)  # (H, W, 1)
 
         ### YOUR CODE HERE ###
         # HINT: Can you implement an equation inspired by the equation for colour?
