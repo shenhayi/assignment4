@@ -37,7 +37,7 @@ def setup_optimizer(gaussians):
         {'params': [gaussians.means], 'lr': 0.0005, "name": "means"},
     ]
     optimizer = torch.optim.Adam(parameters, lr=0.0, eps=1e-15)
-    optimizer = None
+    # optimizer = None
 
     return optimizer
 
@@ -108,7 +108,7 @@ def run_training(args):
         # HINT: Get per_splat from args.gaussians_per_splat
         # HINT: camera is available above
         # pred_img = None
-        pred_img = scene.render(camera, args.gaussians_per_splat, train_dataset.img_size, (0.0, 0.0, 0.0))
+        pred_img, _, _ = scene.render(camera, args.gaussians_per_splat, train_dataset.img_size)
 
         # Compute loss
         ### YOUR CODE HERE ###
@@ -157,7 +157,7 @@ def run_training(args):
             # HINT: Get per_splat from args.gaussians_per_splat
             # HINT: camera is available above
             # pred_img = None
-            pred_img = scene.render(camera, args.gaussians_per_splat, train_dataset.img_size, (0.0, 0.0, 0.0))
+            pred_img, _, _ = scene.render(camera, args.gaussians_per_splat, train_dataset.img_size)
 
         pred_npy = pred_img.detach().cpu().numpy()
         pred_npy = (np.clip(pred_npy, 0.0, 1.0) * 255.0).astype(np.uint8)
@@ -186,7 +186,7 @@ def run_training(args):
             # HINT: Get per_splat from args.gaussians_per_splat
             # HINT: camera is available above
             # pred_img = None
-            pred_img = scene.render(camera, args.gaussians_per_splat, train_dataset.img_size, (0.0, 0.0, 0.0))
+            pred_img, _, _ = scene.render(camera, args.gaussians_per_splat, train_dataset.img_size)
 
             gt_npy = gt_img.detach().cpu().numpy()
             pred_npy = pred_img.detach().cpu().numpy()

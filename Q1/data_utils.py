@@ -210,5 +210,42 @@ def colours_from_spherical_harmonics(spherical_harmonics, gaussian_dirs):
                                     RGB colour.
     """
     ### YOUR CODE HERE ###
-    colours = None
+    # colours = None
+    # Extract x, y, z components from gaussian directions
+    x, y, z = gaussian_dirs[:, 0], gaussian_dirs[:, 1], gaussian_dirs[:, 2]
+    
+    # Compute the spherical harmonics basis functions (up to degree 3)
+    basis = torch.zeros((gaussian_dirs.shape[0], 16), device=gaussian_dirs.device)
+    
+    # L0
+    basis[:, 0] = 0.28209479177387814  # 1/(2*sqrt(pi))
+    
+    # L1
+    basis[:, 1] = 0.4886025119029199 * y   # sqrt(3/(4pi)) * y
+    basis[:, 2] = 0.4886025119029199 * z   # sqrt(3/(4pi)) * z
+    basis[:, 3] = 0.4886025119029199 * x   # sqrt(3/(4pi)) * x
+    
+    # L2
+    basis[:, 4] = 1.0925484305920792 * x * y   # sqrt(15/(4pi)) * xy
+    basis[:, 5] = 1.0925484305920792 * y * z   # sqrt(15/(4pi)) * yz
+    basis[:, 6] = 0.9461746957575601 * (2 * z * z - x * x - y * y)  # sqrt(5/(16pi)) * (3z^2 - 1)
+    basis[:, 7] = 1.0925484305920792 * x * z   # sqrt(15/(4pi)) * xz
+    basis[:, 8] = 0.5462742152960396 * (x * x - y * y)  # sqrt(15/(16pi)) * (x^2 - y^2)
+    
+    # L3
+    basis[:, 9] = 0.5900435899266435 * y * (3 * x * x - y * y)
+    basis[:, 10] = 2.890611442640554 * x * y * z
+    basis[:, 11] = 0.4570457994644658 * y * (5 * z * z - 1)
+    basis[:, 12] = 0.3731763325901154 * z * (5 * z * z - 3)
+    basis[:, 13] = 0.4570457994644658 * x * (5 * z * z - 1)
+    basis[:, 14] = 1.445305721320277 * z * (x * x - y * y)
+    basis[:, 15] = 0.5900435899266435 * x * (x * x - 3 * y * y)
+    
+    # Reshape spherical harmonics to (N, 3, 16)
+    sh_coeffs = spherical_harmonics.view(-1, 3, 16)
+    
+    # Compute colors by multiplying coefficients with basis functions
+    # Result shape will be (N, 3)
+    colours = torch.sum(sh_coeffs * basis.unsqueeze(1), dim=2)
+    
     return colours
